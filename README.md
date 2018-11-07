@@ -1,2 +1,2 @@
 # Evolutionary-Algorithm-Car
-Populations of cars that learns to drive using Evolutionary Algorithms
+Populations of cars that learn to drive using Evolutionary Algorithms
