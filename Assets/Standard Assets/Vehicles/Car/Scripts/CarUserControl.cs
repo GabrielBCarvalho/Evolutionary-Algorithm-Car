@@ -59,6 +59,12 @@ namespace UnityStandardAssets.Vehicles.Car
 		void Start(){
 			lastPosition = transform.position;
 
+			GenerateRandomCar ();
+
+			defaultPosition = gameObject.transform;
+		}
+
+		public void GenerateRandomCar(){
 			genes.Left45Green = RandomAction();
 			genes.Left45Red = RandomAction();
 
@@ -73,8 +79,6 @@ namespace UnityStandardAssets.Vehicles.Car
 
 			genes.RightGreen = RandomAction();
 			genes.RightRed = RandomAction();
-
-			defaultPosition = gameObject.transform;
 		}
 
 		private Action RandomAction(){
@@ -135,6 +139,46 @@ namespace UnityStandardAssets.Vehicles.Car
 			evolutiveManager.ChangeActiveCar ();
 		}
 
+		public void Mutation(float prob){
+			MutationToAGene ("Left45Green", prob);
+			MutationToAGene ("Left45Red", prob);
+			MutationToAGene ("FrontGreen", prob);
+			MutationToAGene ("FrontRed", prob);
+			MutationToAGene ("Right45Green", prob);
+			MutationToAGene ("Right45Red", prob);
+			MutationToAGene ("LeftGreen", prob);
+			MutationToAGene ("LeftRed", prob);
+			MutationToAGene ("RightGreen", prob);
+			MutationToAGene ("RightRed", prob);
+		}
+
+		private void MutationToAGene(string gene, float prob){
+			float random = Random.Range (0f, 1f);
+
+			if (random <= prob) {
+				if (gene == "Left45Green")
+					genes.Left45Green = RandomAction ();
+				else if (gene == "Left45Red")
+					genes.Left45Red = RandomAction ();
+				else if (gene == "FrontGreen")
+					genes.FrontGreen = RandomAction ();
+				else if (gene == "FrontRed")
+					genes.FrontRed = RandomAction ();
+				else if (gene == "Right45Green")
+					genes.Right45Green = RandomAction ();
+				else if (gene == "Right45Red")
+					genes.Right45Red = RandomAction ();
+				else if (gene == "LeftGreen")
+					genes.LeftGreen = RandomAction ();
+				else if (gene == "LeftRed")
+					genes.LeftRed= RandomAction ();
+				else if (gene == "RightGreen")
+					genes.RightGreen = RandomAction ();
+				else if (gene == "RightRed")
+					genes.RightRed = RandomAction ();
+			}
+		}
+
         private void FixedUpdate()
         {
 			if (isActive) {
@@ -149,6 +193,9 @@ namespace UnityStandardAssets.Vehicles.Car
 
 				v = CrossPlatformInputManager.GetAxis("Vertical");
 				//Debug.Log("v = " + v.ToString());
+
+				v = 0f;
+				h = 0f;
 
 				DoAction ("Left45");
 				DoAction ("Front");
@@ -211,13 +258,13 @@ namespace UnityStandardAssets.Vehicles.Car
 
 		private void SetAction(Action action){
 			if (action == Action.Accelerate)
-				v = 0.3f;/*
+				v += 0.25f;/*
 			else if (action == Action.Brake)
-				v = 0f;*/
+				v -= 0.2f;*/
 			else if (action == Action.PressLeft)
-				h = -0.3f;
+				h -= 0.25f;
 			else if (action == Action.PressRight)
-				h = 0.3f;
+				h += 0.25f;
 		}
     }
 }

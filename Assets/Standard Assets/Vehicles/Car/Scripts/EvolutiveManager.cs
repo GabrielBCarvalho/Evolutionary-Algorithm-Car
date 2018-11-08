@@ -35,14 +35,18 @@ public class EvolutiveManager : MonoBehaviour {
 	public void ChangeActiveCar(){
 		if (activeCar == 5) {	//Finish Generation
 			Crossover ();
+			Mutation ();
+			Genocide ();
 			activeCar = 0;
 			countGeneration++;
 			txtGeneration.text = countGeneration.ToString ();
-		} else {
+		} else {	// Change active car
 			activeCar++;
 			Debug.Log ("Active car = " + activeCar.ToString ());
 			Debug.Log ("Generation = " + countGeneration.ToString ());
 		}
+
+		// Change active cars and positions in Unity
 		for (int i = 0; i < cars.Length; i++) {
 			if (i != activeCar) {
 				cars [i].SetActive (false);
@@ -62,6 +66,7 @@ public class EvolutiveManager : MonoBehaviour {
 	private void Crossover(){
 		int idBest = 0;
 
+		// Finds the best car
 		for (int i = 1; i < cars.Length; i++) {
 			if (cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance >
 			   cars [idBest].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance)
@@ -70,6 +75,7 @@ public class EvolutiveManager : MonoBehaviour {
 
 		Debug.Log ("Generation ended. Best car = " + idBest + "; Distance traveled = " + cars [idBest].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance);
 
+		// Combine genes and reset distances
 		for (int i = 0; i < cars.Length; i++) {
 			if (i != idBest) {
 				cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().CombineGenes (cars [idBest].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().genes);
@@ -77,6 +83,36 @@ public class EvolutiveManager : MonoBehaviour {
 			cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance = 0f;
 			cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().lastPosition = cars[i].gameObject.transform.position;
 		}
+	}
+
+	// Apply mutation to each car
+	private void Mutation(){
+		for (int i = 0; i < cars.Length; i++)
+			cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().Mutation (0.3f);
+	}
+
+	// Kills the worse car and generates a new random individual
+	private void Genocide(){
+		int idLast = 0;
+		/*int idLast, idPreLast;
+		if (cars [0].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance >
+		    cars [1].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance) {
+			idPreLast = 0;
+			idLast = 1;
+		} else {
+			idPreLast = 1;
+			idLast = 0;
+		}
+		*/
+		// Finds the worst car
+		for (int i = 0; i < cars.Length; i++) {
+			if (cars [i].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance <
+			   cars [idLast].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().distance)
+				idLast = i;
+		}
+
+		// Generate a new car
+		cars [idLast].GetComponent<UnityStandardAssets.Vehicles.Car.CarUserControl> ().GenerateRandomCar ();
 	}
 
 	/*TODO
